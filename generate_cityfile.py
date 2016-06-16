@@ -20,7 +20,7 @@ def main():
     parser.add_argument('--local_file',
                         default=None,
                         dest='local_file',
-                        help='path to local file')
+                        help='path to local file to import')
     parser.add_argument('--output_file',
                         default='cities.json',
                         dest='output_file',
