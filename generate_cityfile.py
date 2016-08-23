@@ -41,8 +41,7 @@ def main():
             for info in zf.infolist():
                 if info.filename == 'readme.txt':
                     continue
-
-                import_file(io.TextIOWrapper(zf.open(info.filename)), of)
+                import_file(io.TextIOWrapper(zf.open(info.filename), encoding='UTF-8'), of)
     else:
         import_file(open(args.local_file), of)
 
@@ -97,7 +96,7 @@ def import_file(f, of):
                 cnt += 1
                 cities[city_key] = {'_key': '{}{}'.format(country_code, cnt),
                                     'name': row.city_name,
-                                    'state': row.admin_name1,
+                                    'region': get_state_abbr(row.country_code, row.admin_name1),
                                     'country_code': row.country_code,
                                     'label': label,
                                     'postal_codes': []}
@@ -120,11 +119,92 @@ def import_file(f, of):
 
     dump_cities(cities, of)
 
+    
+US_STATES = {
+    'Alaska': 'AK',
+    'Alabama': 'AL',
+    'Arkansas': 'AR',
+    'American Samoa': 'AS',
+    'Arizona': 'AZ',
+    'California': 'CA',
+    'Colorado': 'CO',
+    'Connecticut': 'CT',
+    'District of Columbia': 'DC',
+    'Delaware': 'DE',
+    'Florida': 'FL',
+    'Georgia': 'GA',
+    'Guam': 'GU',
+    'Hawaii': 'HI',
+    'Iowa': 'IA',
+    'Idaho': 'ID',
+    'Illinois': 'IL',
+    'Indiana': 'IN',
+    'Kansas': 'KS',
+    'Kentucky': 'KY',
+    'Louisiana': 'LA',
+    'Massachusetts': 'MA',
+    'Maryland': 'MD',
+    'Maine': 'ME',
+    'Michigan': 'MI',
+    'Minnesota': 'MN',
+    'Missouri': 'MO',
+    'Northern Mariana Islands': 'MP',
+    'Mississippi': 'MS',
+    'Montana': 'MT',
+    'National': 'NA',
+    'North Carolina': 'NC',
+    'North Dakota': 'ND',
+    'Nebraska': 'NE',
+    'New Hampshire': 'NH',
+    'New Jersey': 'NJ',
+    'New Mexico': 'NM',
+    'Nevada': 'NV',
+    'New York': 'NY',
+    'Ohio': 'OH',
+    'Oklahoma': 'OK',
+    'Oregon': 'OR',
+    'Pennsylvania': 'PA',
+    'Puerto Rico': 'PR',
+    'Rhode Island': 'RI',
+    'South Carolina': 'SC',
+    'South Dakota': 'SD',
+    'Tennessee': 'TN',
+    'Texas': 'TX',
+    'Utah': 'UT',
+    'Virginia': 'VA',
+    'Virgin Islands': 'VI',
+    'Vermont': 'VT',
+    'Washington': 'WA',
+    'Wisconsin': 'WI',
+    'West Virginia': 'WV',
+    'Wyoming': 'WY'
+}
 
-def get_state_abbr(country_code, state_name):
-    # You might want to write a function to convert
-    # state names to abbreviations
-    return state_name
+
+CA_PROV_TERR = {
+    'Alberta': 'AB',
+    'British Columbia': 'BC',
+    'Manitoba': 'MB',
+    'New Brunswick': 'NB',
+    'Newfoundland and Labrador': 'NL',
+    'Northwest Territories': 'NT',
+    'Nova Scotia': 'NS',
+    'Nunavut': 'NU',
+    'Ontario': 'ON',
+    'Prince Edward Island': 'PE',
+    'Quebec': 'QC',
+    'Saskatchewan': 'SK',
+    'Yukon': 'YT'
+}
+
+
+def get_state_abbr(country_code, region_name):
+    if country_code == 'US':
+        return US_STATES.get(region_name, region_name)
+    elif country_code == 'CA':
+        return CA_PROV_TERR.get(region_name, region_name)
+        
+    return region_name
 
 
 def dump_cities(cities, of):
